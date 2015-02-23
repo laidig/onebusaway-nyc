@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.onebusaway.geospatial.model.CoordinatePoint;
+import org.onebusaway.nyc.presentation.impl.realtime.SiriSupport.DetailLevel;
 import org.onebusaway.nyc.presentation.impl.realtime.SiriSupport.OnwardCallsMode;
 import org.onebusaway.nyc.presentation.service.realtime.PresentationService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
@@ -51,7 +52,7 @@ public class SiriSupportTest {
     when(monitoredCallStopBean.getId()).thenReturn(STOP_ID);
     MonitoredVehicleJourney journey = new MonitoredVehicleJourney();
     SiriSupport.fillMonitoredVehicleJourney(journey, trip.getTrip(), trip.getStatus(), null, OnwardCallsMode.VEHICLE_MONITORING,
-        presentationService, nycTransitDataService, 0, null, System.currentTimeMillis());
+        presentationService, nycTransitDataService, 0, null, System.currentTimeMillis(), DetailLevel.NORMAL);
     
     assertNotNull(journey);
     List<SituationRefStructure> situationRefs = journey.getSituationRef();
@@ -62,7 +63,69 @@ public class SiriSupportTest {
     assertEquals(MOCK_SERVICE_ALERT_ID, simpleRef.getValue());
     
   }
+  @Test
+  public void testGetMonitoredVehicleJourneyMinimumDetail() {    
+	    TripDetailsBean trip = setupMock();
+	    PresentationService presentationService = mock(PresentationService.class);
+	    NycTransitDataService nycTransitDataService = mock(NycTransitDataService.class);
 
+	    BlockInstanceBean blockInstance = new BlockInstanceBean();
+	    BlockConfigurationBean blockConfig = new BlockConfigurationBean();
+	    blockConfig.setTrips(new ArrayList<BlockTripBean>());
+	    blockInstance.setBlockConfiguration(blockConfig);
+	    
+	    when(nycTransitDataService.getBlockInstance("BLOCK", 0)).thenReturn(blockInstance);
+	    
+	    StopBean monitoredCallStopBean = mock(StopBean.class);
+	    when(monitoredCallStopBean.getId()).thenReturn(STOP_ID);
+	    MonitoredVehicleJourney journey = new MonitoredVehicleJourney();
+	    SiriSupport.fillMonitoredVehicleJourney(journey, trip.getTrip(), trip.getStatus(), null, OnwardCallsMode.VEHICLE_MONITORING,
+	        presentationService, nycTransitDataService, 0, null, System.currentTimeMillis(), DetailLevel.MINIMUM);
+	    	    
+	    assertNotNull(journey);
+	    //should have published line name, but not lineRef
+	    assertNotNull(journey.getPublishedLineName());
+	    assertNull(journey.getLineRef());
+	    List<SituationRefStructure> situationRefs = journey.getSituationRef();
+	    assertNotNull(situationRefs);
+	    assertEquals(0, situationRefs.size());
+	  }
+  @Test
+  public void testGetMonitoredVehicleJourneyBasicDetail() {    
+	    TripDetailsBean trip = setupMock();
+	    PresentationService presentationService = mock(PresentationService.class);
+	    NycTransitDataService nycTransitDataService = mock(NycTransitDataService.class);
+
+	    BlockInstanceBean blockInstance = new BlockInstanceBean();
+	    BlockConfigurationBean blockConfig = new BlockConfigurationBean();
+	    blockConfig.setTrips(new ArrayList<BlockTripBean>());
+	    blockInstance.setBlockConfiguration(blockConfig);
+	    
+	    when(nycTransitDataService.getBlockInstance("BLOCK", 0)).thenReturn(blockInstance);
+	    
+	    StopBean monitoredCallStopBean = mock(StopBean.class);
+	    when(monitoredCallStopBean.getId()).thenReturn(STOP_ID);
+	    MonitoredVehicleJourney journey = new MonitoredVehicleJourney();
+	    SiriSupport.fillMonitoredVehicleJourney(journey, trip.getTrip(), trip.getStatus(), null, OnwardCallsMode.VEHICLE_MONITORING,
+	        presentationService, nycTransitDataService, 0, null, System.currentTimeMillis(), DetailLevel.BASIC);
+	    	    
+	    assertNotNull(journey);
+	    //should have published line name and lineRef
+	    assertNotNull(journey.getPublishedLineName());
+	    assertNotNull(journey.getLineRef());
+	    //not calls
+	    assertNull(journey.getOnwardCalls());
+	    assertNull(journey.getOriginName());
+	    //shape id is redundant keyed to trip
+	    assertNull(journey.getJourneyPatternRef());
+	    
+	    List<SituationRefStructure> situationRefs = journey.getSituationRef();
+	    assertNotNull(situationRefs);
+	    assertEquals(1, situationRefs.size());
+	    SituationRefStructure situationRef = situationRefs.get(0);
+	    SituationSimpleRefStructure simpleRef = situationRef.getSituationSimpleRef();
+	    assertEquals(MOCK_SERVICE_ALERT_ID, simpleRef.getValue());
+	  }
   public TripDetailsBean setupMock() {
     TripDetailsBean tripDetails = new TripDetailsBean();
     TripBean tripBean = new TripBean();
