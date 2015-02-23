@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 import org.onebusaway.geospatial.model.CoordinatePoint;
-import org.onebusaway.nyc.presentation.impl.realtime.SiriSupport.DetailLevel;
 import org.onebusaway.nyc.presentation.impl.realtime.SiriSupport.OnwardCallsMode;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.PresentationService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.transit_data.model.RouteBean;

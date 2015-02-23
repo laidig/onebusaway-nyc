@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.presentation.impl.realtime.SiriSupport.OnwardCallsMode;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.PresentationService;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
@@ -97,7 +98,7 @@ public class RealtimeServiceImpl implements RealtimeService {
    * SIRI METHODS
    */
   @Override
-  public List<VehicleActivityStructure> getVehicleActivityForRoute(String routeId, String directionId, int maximumOnwardCalls, long currentTime) {
+  public List<VehicleActivityStructure> getVehicleActivityForRoute(String routeId, String directionId, int maximumOnwardCalls, long currentTime, DetailLevel detailLevel) {
     List<VehicleActivityStructure> output = new ArrayList<VehicleActivityStructure>();
     
     boolean useTimePredictionsIfAvailable =
@@ -128,7 +129,7 @@ public class RealtimeServiceImpl implements RealtimeService {
       SiriSupport.fillMonitoredVehicleJourney(activity.getMonitoredVehicleJourney(), 
           tripDetails.getTrip(), tripDetails.getStatus(), null, OnwardCallsMode.VEHICLE_MONITORING,
           _presentationService, _nycTransitDataService, maximumOnwardCalls, 
-          timePredictionRecords, currentTime);
+          timePredictionRecords, currentTime, detailLevel);
             
       output.add(activity);
     }
@@ -149,7 +150,7 @@ public class RealtimeServiceImpl implements RealtimeService {
   }
 
   @Override
-  public VehicleActivityStructure getVehicleActivityForVehicle(String vehicleId, int maximumOnwardCalls, long currentTime) {    
+  public VehicleActivityStructure getVehicleActivityForVehicle(String vehicleId, int maximumOnwardCalls, long currentTime, DetailLevel detailLevel) {    
 
 	boolean useTimePredictionsIfAvailable =
 	  		_presentationService.useTimePredictionsIfAvailable();
@@ -180,7 +181,7 @@ public class RealtimeServiceImpl implements RealtimeService {
       SiriSupport.fillMonitoredVehicleJourney(output.getMonitoredVehicleJourney(), 
     	  tripDetailsForCurrentTrip.getTrip(), tripDetailsForCurrentTrip.getStatus(), null, OnwardCallsMode.VEHICLE_MONITORING,
     	  _presentationService, _nycTransitDataService, maximumOnwardCalls,
-    	  timePredictionRecords, currentTime);
+    	  timePredictionRecords, currentTime, detailLevel);
 
       return output;
     }
@@ -189,7 +190,7 @@ public class RealtimeServiceImpl implements RealtimeService {
   }
 
   @Override
-  public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(String stopId, int maximumOnwardCalls, long currentTime) {
+  public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(String stopId, int maximumOnwardCalls, long currentTime, DetailLevel detailLevel) {
     List<MonitoredStopVisitStructure> output = new ArrayList<MonitoredStopVisitStructure>();
 
 	boolean useTimePredictionsIfAvailable =
@@ -217,7 +218,7 @@ public class RealtimeServiceImpl implements RealtimeService {
       SiriSupport.fillMonitoredVehicleJourney(stopVisit.getMonitoredVehicleJourney(), 
     	  tripBeanForAd, statusBeanForCurrentTrip, adBean.getStop(), OnwardCallsMode.STOP_MONITORING,
     	  _presentationService, _nycTransitDataService, maximumOnwardCalls,
-    	  timePredictionRecords, currentTime);
+    	  timePredictionRecords, currentTime, detailLevel);
 
       output.add(stopVisit);
     }

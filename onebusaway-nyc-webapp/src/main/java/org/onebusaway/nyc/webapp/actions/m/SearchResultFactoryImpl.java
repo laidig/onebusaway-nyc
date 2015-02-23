@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.onebusaway.nyc.geocoder.service.NycGeocoderResult;
 import org.onebusaway.nyc.presentation.impl.search.AbstractSearchResultFactoryImpl;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.model.SearchResult;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.presentation.service.search.SearchResultFactory;
@@ -252,8 +253,9 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
     Map<String, List<String>> results = new HashMap<String, List<String>>();
 
     // stop visits
+    // unsure about testing DetailLevel here/
     List<MonitoredStopVisitStructure> visitList = _realtimeService.getMonitoredStopVisitsForStop(
-        stopBean.getId(), 0, System.currentTimeMillis());
+        stopBean.getId(), 0, System.currentTimeMillis(), DetailLevel.BASIC);
 
     for (MonitoredStopVisitStructure visit : visitList) {
       String routeId = visit.getMonitoredVehicleJourney().getLineRef().getValue();
@@ -298,7 +300,7 @@ public class SearchResultFactoryImpl extends AbstractSearchResultFactoryImpl imp
 
     // stop visits
     List<VehicleActivityStructure> journeyList = _realtimeService.getVehicleActivityForRoute(
-        routeBean.getId(), null, 0, System.currentTimeMillis());
+        routeBean.getId(), null, 0, System.currentTimeMillis(), DetailLevel.BASIC);
 
     // build map of stop IDs to list of distance strings
     for (VehicleActivityStructure journey : journeyList) {

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.presentation.impl.AgencySupportLibrary;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.PresentationService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.transit_data_federation.siri.SiriDistanceExtension;
@@ -68,13 +69,6 @@ public final class SiriSupport {
 		STOP_MONITORING
 	}
 
-	public enum DetailLevel {
-		CALLS,
-		NORMAL,
-		BASIC,
-		MINIMUM
-	}
-
 	/**
 	 * NOTE: The tripDetails bean here may not be for the trip the vehicle is currently on 
 	 * in the case of A-D for stop!
@@ -100,9 +94,7 @@ public final class SiriSupport {
 		NaturalLanguageStringStructure routeShortName = new NaturalLanguageStringStructure();
 		routeShortName.setValue(framedJourneyTripBean.getRoute().getShortName());
 		monitoredVehicleJourney.setPublishedLineName(routeShortName);
-
 		monitoredVehicleJourney.setMonitored(currentVehicleTripStatus.isPredicted());
-
 		monitoredVehicleJourney.setBearing((float)currentVehicleTripStatus.getOrientation());
 
 		// location

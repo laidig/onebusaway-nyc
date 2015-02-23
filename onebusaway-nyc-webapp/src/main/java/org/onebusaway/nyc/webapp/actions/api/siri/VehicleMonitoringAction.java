@@ -30,6 +30,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.onebusaway.geospatial.model.CoordinateBounds;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.presentation.impl.service_alerts.ServiceAlertsHelper;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.util.configuration.ConfigurationService;
@@ -98,6 +99,14 @@ public class VehicleMonitoringAction extends OneBusAwayNYCActionSupport
     
     _realtimeService.setTime(currentTimestamp);
     
+    //get the detail level parameter or set it to default if not specified
+    DetailLevel detailLevel;
+    if(_request.getParameter("VehicleMonitoringDetailLevel") == null){
+    	detailLevel = DetailLevel.NORMAL;
+    }else{
+    	detailLevel = DetailLevel.valueOf(_request.getParameter("VehicleMonitoringDetailLevel"));
+    }
+    
     String directionId = _request.getParameter("DirectionRef");
     
     // We need to support the user providing no agency id which means 'all agencies'.
@@ -155,8 +164,6 @@ public class VehicleMonitoringAction extends OneBusAwayNYCActionSupport
       }
     }
 
-    String detailLevel = _request.getParameter("VehicleMonitoringDetailLevel");
-
     int maximumOnwardCalls = 0;
     if (detailLevel != null && detailLevel.equals("calls")) {
       maximumOnwardCalls = Integer.MAX_VALUE;
@@ -179,7 +186,7 @@ public class VehicleMonitoringAction extends OneBusAwayNYCActionSupport
       
       for (AgencyAndId vehicleId : vehicleIds) {
         VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-            vehicleId.toString(), maximumOnwardCalls, currentTimestamp);
+            vehicleId.toString(), maximumOnwardCalls, currentTimestamp, detailLevel);
 
         if (activity != null) {
           activities.add(activity);
@@ -199,7 +206,7 @@ public class VehicleMonitoringAction extends OneBusAwayNYCActionSupport
       for (AgencyAndId routeId : routeIds) {
         
         List<VehicleActivityStructure> activitiesForRoute = _realtimeService.getVehicleActivityForRoute(
-            routeId.toString(), directionId, maximumOnwardCalls, currentTimestamp);
+            routeId.toString(), directionId, maximumOnwardCalls, currentTimestamp, detailLevel);
         if (activitiesForRoute != null) {
           activities.addAll(activitiesForRoute);
         }
@@ -244,7 +251,7 @@ public class VehicleMonitoringAction extends OneBusAwayNYCActionSupport
 
           for (VehicleStatusBean v : vehicles.getList()) {
             VehicleActivityStructure activity = _realtimeService.getVehicleActivityForVehicle(
-                v.getVehicleId(), maximumOnwardCalls, currentTimestamp);
+                v.getVehicleId(), maximumOnwardCalls, currentTimestamp, detailLevel);
 
             if (activity != null) {
               activities.add(activity);

@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.transit_data_federation.siri.SiriDistanceExtension;
@@ -219,7 +220,7 @@ public class SearchResultFactoryImplTest {
     when(monCall.getExtensions()).thenReturn(extensions );
     when(monVehJourney.getMonitoredCall()).thenReturn(monCall );
     
-    when(_realtimeService.getMonitoredStopVisitsForStop(eq(TEST_STOP_ID), eq(0), anyLong())).thenReturn(monitoredStopVisits );
+    when(_realtimeService.getMonitoredStopVisitsForStop(eq(TEST_STOP_ID), eq(0), anyLong(), eq(DetailLevel.BASIC))).thenReturn(monitoredStopVisits );
 
     when(_nycTransitDataService.getStopsForRoute(anyString())).thenReturn(
         stopsForRouteBean);

@@ -32,6 +32,7 @@ import org.apache.struts2.interceptor.ServletResponseAware;
 import org.onebusaway.geospatial.model.CoordinateBounds;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.presentation.impl.service_alerts.ServiceAlertsHelper;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.util.configuration.ConfigurationService;
@@ -90,6 +91,14 @@ public class StopMonitoringAction extends OneBusAwayNYCActionSupport
     _monitoringActionSupport.setupGoogleAnalytics(_request, _configurationService);
   
     _realtimeService.setTime(responseTimestamp);
+    
+    //get the detail level parameter or set it to default if not specified
+    DetailLevel detailLevel;
+    if(_request.getParameter("StopMonitoringDetailLevel") == null){
+    	detailLevel = DetailLevel.NORMAL;
+    }else{
+    	detailLevel = DetailLevel.valueOf(_request.getParameter("StopMonitoringDetailLevel"));
+    }
 
     String directionId = _request.getParameter("DirectionRef");
     
@@ -166,8 +175,6 @@ public class StopMonitoringAction extends OneBusAwayNYCActionSupport
       if (routeIds.size() > 0) routeIdsErrorString = "";
     }
     
-    String detailLevel = _request.getParameter("StopMonitoringDetailLevel");
-
     int maximumOnwardCalls = 0;        
     if (detailLevel != null && detailLevel.equals("calls")) {
       maximumOnwardCalls = Integer.MAX_VALUE;
@@ -206,7 +213,7 @@ public class StopMonitoringAction extends OneBusAwayNYCActionSupport
       if (!stopId.hasValues()) continue;
       
       // Stop ids can only be valid here because we only added valid ones to stopIds.
-      List<MonitoredStopVisitStructure> visitsForStop = _realtimeService.getMonitoredStopVisitsForStop(stopId.toString(), maximumOnwardCalls, responseTimestamp);
+      List<MonitoredStopVisitStructure> visitsForStop = _realtimeService.getMonitoredStopVisitsForStop(stopId.toString(), maximumOnwardCalls, responseTimestamp, detailLevel);
       if (visitsForStop != null) visits.addAll(visitsForStop); 
     }
     

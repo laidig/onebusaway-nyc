@@ -24,6 +24,7 @@ import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.onebusaway.gtfs.model.AgencyAndId;
 import org.onebusaway.nyc.presentation.impl.service_alerts.ServiceAlertsHelper;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.webapp.actions.OneBusAwayNYCActionSupport;
@@ -121,8 +122,10 @@ public class StopForIdAction extends OneBusAwayNYCActionSupport {
 
     _result = new StopResult(stop, routesAtStop);
 
+    //unclear how this is used, so this is a pure guess (I know, I know)
+    //DetailLevel.BASIC may be an improvement.
     List<MonitoredStopVisitStructure> visits = 
-        _realtimeService.getMonitoredStopVisitsForStop(_stopId, 0, System.currentTimeMillis());
+        _realtimeService.getMonitoredStopVisitsForStop(_stopId, 0, System.currentTimeMillis(), DetailLevel.NORMAL);
 
     _response = generateSiriResponse(visits, AgencyAndIdLibrary.convertFromString(_stopId));
     

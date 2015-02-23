@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.onebusaway.nyc.presentation.impl.service_alerts.ServiceAlertsTestSupport;
+import org.onebusaway.nyc.presentation.model.DetailLevel;
 import org.onebusaway.nyc.presentation.service.realtime.RealtimeService;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.transit_data_federation.siri.SiriXmlSerializer;
@@ -32,6 +33,9 @@ import org.onebusaway.transit_data.model.RouteBean;
 import org.onebusaway.transit_data.model.service_alerts.ServiceAlertBean;
 import org.onebusaway.transit_data.model.service_alerts.SituationQueryBean;
 
+import uk.org.siri.siri.OnwardCallStructure;
+import uk.org.siri.siri.OnwardCallsStructure;
+import uk.org.siri.siri.StopPointRefStructure;
 import uk.org.siri.siri.LocationStructure;
 import uk.org.siri.siri.SituationRefStructure;
 import uk.org.siri.siri.SituationSimpleRefStructure;
@@ -76,7 +80,7 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     when(servletResponse.getWriter()).thenReturn(nothingPrintWriter);
     
     List<VehicleActivityStructure> vehicleActivities = new ArrayList<VehicleActivityStructure>();
-    when(realtimeService.getVehicleActivityForRoute(eq("MTA NYCT_S51"), anyString(), eq(0), anyLong())).thenReturn(vehicleActivities);
+    when(realtimeService.getVehicleActivityForRoute(eq("MTA NYCT_S51"), anyString(), eq(0), anyLong(), eq(DetailLevel.NORMAL))).thenReturn(vehicleActivities);
     
     VehicleActivityStructure vehicleActivity = new VehicleActivityStructure();
     vehicleActivities.add(vehicleActivity);
@@ -120,6 +124,9 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     
     when(request.getParameter(eq("LineRef"))).thenReturn("S51");
     when(request.getParameter(eq("OperatorRef"))).thenReturn("MTA NYCT");
+    //should have a test to take care of checking detail levels. 
+    //e.g. if detailLevel != calls, then no OnwardCalls element.
+    when(request.getParameter(eq("VehicleMonitoringDetailLevel"))).thenReturn("NORMAL");
     
     PrintWriter nothingPrintWriter = new PrintWriter(new OutputStream() {
       @Override
@@ -130,7 +137,7 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     when(servletResponse.getWriter()).thenReturn(nothingPrintWriter);
     
     List<VehicleActivityStructure> vehicleActivities = new ArrayList<VehicleActivityStructure>();
-    when(realtimeService.getVehicleActivityForRoute(eq("MTA NYCT_S51"), anyString(), eq(0), anyLong())).thenReturn(vehicleActivities);
+    when(realtimeService.getVehicleActivityForRoute(eq("MTA NYCT_S51"), anyString(), eq(0), anyLong(), eq(DetailLevel.NORMAL))).thenReturn(vehicleActivities);
     
     ServiceAlertBean serviceAlertBean = ServiceAlertsTestSupport.createServiceAlertBean("MTA NYCT_1");
     when(transitDataService.getServiceAlertForId(anyString())).thenReturn(serviceAlertBean );
@@ -153,5 +160,4 @@ public class VehicleMonitoringActionTest extends VehicleMonitoringAction {
     String monitoring = action.getVehicleMonitoring();
     assertTrue("Result XML does not match expected", monitoring.matches("(?s).*<SituationExchangeDelivery><Situations><PtSituationElement><SituationNumber>MTA NYCT_1</SituationNumber><Summary xml:lang=\"EN\">summary</Summary><Description xml:lang=\"EN\">description</Description><Affects><VehicleJourneys><AffectedVehicleJourney><LineRef>MTA NYCT_B63</LineRef><DirectionRef>0</DirectionRef></AffectedVehicleJourney><AffectedVehicleJourney><LineRef>MTA NYCT_B63</LineRef><DirectionRef>1</DirectionRef></AffectedVehicleJourney><AffectedVehicleJourney><LineRef>MTA NYCT_S55</LineRef><DirectionRef>0</DirectionRef></AffectedVehicleJourney><AffectedVehicleJourney><LineRef>MTA NYCT_S55</LineRef><DirectionRef>1</DirectionRef></AffectedVehicleJourney></VehicleJourneys></Affects></PtSituationElement></Situations></SituationExchangeDelivery></ServiceDelivery></Siri>.*"));
   }
-
 }
