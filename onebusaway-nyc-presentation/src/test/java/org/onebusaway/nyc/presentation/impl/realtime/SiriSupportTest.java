@@ -113,7 +113,7 @@ public class SiriSupportTest {
 	    //should have published line name and lineRef
 	    assertNotNull(journey.getPublishedLineName());
 	    assertNotNull(journey.getLineRef());
-	    //not calls
+	    //and no calls
 	    assertNull(journey.getOnwardCalls());
 	    assertNull(journey.getOriginName());
 	    //shape id is redundant keyed to trip
@@ -126,6 +126,7 @@ public class SiriSupportTest {
 	    SituationSimpleRefStructure simpleRef = situationRef.getSituationSimpleRef();
 	    assertEquals(MOCK_SERVICE_ALERT_ID, simpleRef.getValue());
 	  }
+  
   public TripDetailsBean setupMock() {
     TripDetailsBean tripDetails = new TripDetailsBean();
     TripBean tripBean = new TripBean();
