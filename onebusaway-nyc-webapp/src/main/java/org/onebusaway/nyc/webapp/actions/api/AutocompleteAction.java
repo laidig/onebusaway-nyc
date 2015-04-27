@@ -26,19 +26,19 @@ import org.onebusaway.nyc.webapp.actions.OneBusAwayNYCActionSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @ParentPackage("json-default")
-@Result(type="json", params={"callbackParameter", "callback", "root", "suggestions"})
+@Result(type="json", params={"root", "suggestions"})
 public class AutocompleteAction extends OneBusAwayNYCActionSupport {
 
   private static final long serialVersionUID = 1L;
 
   @Autowired
   private NycTransitDataService _nycTransitDataService;
-  
+
   @Autowired
   private NycGeocoderService _geocoderService;
 
   private List<String> suggestions = null;
-  
+
   private String _term = null;
 
   public void setTerm(String term) {
@@ -48,25 +48,25 @@ public class AutocompleteAction extends OneBusAwayNYCActionSupport {
   }
 
   @Override
-  public String execute() {    
-    if(_term == null || _term.isEmpty())
+  public String execute() {
+    if (_term == null || _term.isEmpty() )
       return SUCCESS;
-    
+
     suggestions = _nycTransitDataService.getSearchSuggestions(null, _term.toLowerCase());
-    
-    if (suggestions.size() == 0 && _term.length() > 2) {
+
+    if (suggestions.size() == 0 && _term.length() >= 3) {
     	List<NycGeocoderResult> geocoderResults = _geocoderService.nycGeocode(_term);
-    	if (geocoderResults.size() > 0) {
-        	for (int i = 0; i < 10; i++) {
-        		suggestions.add(geocoderResults.get(i).getFormattedAddress());
-        		if (i+1 == geocoderResults.size())
-        			break;
-        	}
-    	}
+      if (geocoderResults.size() > 0) {
+        for (int i = 0; i < 10; i++) {
+          suggestions.add(geocoderResults.get(i).getFormattedAddress());
+          if (i + 1 == geocoderResults.size())
+            break;
+        }
+      }
     }
     return SUCCESS;
-  }   
-  
+  }
+
   /** 
    * VIEW METHODS
    */
