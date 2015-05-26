@@ -36,7 +36,8 @@ public interface RealtimeServiceV2 {
 
 	public List<MonitoredStopVisitStructure> getMonitoredStopVisitsForStop(
 			String stopId, int maximumOnwardCalls, DetailLevel detailLevel,
-			long currentTime);
+			long currentTime, List<AgencyAndId> routeIds,
+			Map<Filters, String> filters);
 
 	public boolean getVehiclesInServiceForRoute(String routeId,
 			String directionId, long currentTime);
@@ -54,7 +55,9 @@ public interface RealtimeServiceV2 {
 	public List<ServiceAlertBean> getServiceAlertsGlobal();
 
 	public Map<Boolean, List<AnnotatedStopPointStructure>> getAnnotatedStopPointStructures(
-			CoordinateBounds bounds, DetailLevel detailLevel, long currentTime, Map<Filters, String> filters);
+			CoordinateBounds bounds, List<AgencyAndId> routeIds,
+			DetailLevel detailLevel, long currentTime,
+			Map<Filters, String> filters);
 
 	public Map<Boolean, List<AnnotatedStopPointStructure>> getAnnotatedStopPointStructures(
 			List<AgencyAndId> routeIds, DetailLevel detailLevel,
@@ -67,5 +70,7 @@ public interface RealtimeServiceV2 {
 	public Map<Boolean, List<AnnotatedLineStructure>> getAnnotatedLineStructures(
 			CoordinateBounds bounds, DetailLevel detailLevel,
 			long responseTimestamp, Map<Filters, String> filters);
+
+	
 
 }
