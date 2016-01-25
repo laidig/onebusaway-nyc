@@ -8,3 +8,4 @@
 *.swp
 target
 Servers
+*.recommenders/*
