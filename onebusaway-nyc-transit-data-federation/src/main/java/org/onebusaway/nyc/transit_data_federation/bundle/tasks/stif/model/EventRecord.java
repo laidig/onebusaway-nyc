@@ -53,6 +53,24 @@ public class EventRecord implements StifRecord {
   private boolean timepoint;
   private String locationTypeCode;
   private int boardAlightFlag;
+  
+  // there are stops that are marked non-rev and boarding/alighting allowed, or rev with neither. 
+  // these are impossible
+  public boolean isImpossibleStop(){
+    boolean isImpossible = false;
+    if (isRevenue() && boardAlightFlag == 0){
+      isImpossible = true;
+    }
+    if (!isRevenue() && boardAlightFlag > 0 && boardAlightFlag < 4){
+      isImpossible = true;
+    }
+    return isImpossible;
+  }
+  
+  public String toString(){
+    String info = getLocation() + " at " + getTime() + " Board/Alight " + getBoardAlightFlag() + " revenue: " + isRevenue();
+        return info;
+  }
 
   public String getLocation() {
     return location;

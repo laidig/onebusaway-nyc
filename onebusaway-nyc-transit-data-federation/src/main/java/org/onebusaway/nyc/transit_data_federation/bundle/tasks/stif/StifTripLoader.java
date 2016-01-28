@@ -176,14 +176,21 @@ public class StifTripLoader {
         if (record instanceof EventRecord) {
           // track the first and last event records which are revenue stops
           // for use in trip processing
+         
           if (tripRecord == null) {
             continue;
           }
+
           EventRecord possibleEventRecord = (EventRecord) record;
+          if (possibleEventRecord.isImpossibleStop()){
+            _log.warn(possibleEventRecord.toString() + "is impossible");
+          }
+          
           if (possibleEventRecord.getLocation() == null)
             //yet another new kind of bogus record
             continue;
           if (!possibleEventRecord.isRevenue()) {
+            _log.info("non-rev " + possibleEventRecord.toString());
             // Keep track of the first and last non-revenue stop events
             lastNonRevEventRecord = possibleEventRecord;
             if (firstNonRevEventRecord == null && firstEventRecord == null) {

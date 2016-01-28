@@ -196,6 +196,30 @@ public class TestStifTripLoaderTest {
     assertTrue(loader.getNonRevenueStopDataByTripId().containsKey(AgencyAndId.convertFromString("MTA NYCT_EN_C3-Saturday-001000_B42_1")));
     
   }
+  
+  @Test
+  public void testImpossibleStop() throws IOException{
+    InputStream in = getClass().getResourceAsStream("stif.Q_70____.714109.Sat");
+    assertNotNull(in);
+    String gtfs = getClass().getResource("q70_gtfs").getFile();
+    assertNotNull(gtfs);
+    GtfsReader reader = new GtfsReader();
+    GtfsRelationalDaoImpl dao = new GtfsRelationalDaoImpl();
+    reader.setEntityStore(dao);
+    reader.setInputLocation(new File(gtfs));
+    reader.run();
+    
+    Collection<Trip> allTrips = dao.getAllTrips();
+    assertTrue(allTrips.size() > 0);
+
+    StifTripLoader loader = new StifTripLoader();
+    loader.setLogger(new MultiCSVLogger());
+    loader.setGtfsDao(dao);
+    loader.run(in, new File("stif.Q_70____.714109.Sat"));
+    assertTrue(loader.getTripsCount() > 0);
+    
+        
+  }
 
   //@Test
   public void testNextOperatorDepot() throws IOException {
