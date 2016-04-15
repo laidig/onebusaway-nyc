@@ -22,6 +22,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 import org.onebusaway.nyc.transit_data_federation.bundle.tasks.stif.StifRecordReader;
+import org.onebusaway.nyc.transit_data_federation.bundle.tasks.stif.model.EventRecord;
 import org.onebusaway.nyc.transit_data_federation.bundle.tasks.stif.model.GeographyRecord;
 import org.onebusaway.nyc.transit_data_federation.bundle.tasks.stif.model.ServiceCode;
 import org.onebusaway.nyc.transit_data_federation.bundle.tasks.stif.model.SignCodeRecord;
@@ -51,6 +52,11 @@ public class TestStifRecordReaderTest {
 	      TripRecord trip = (TripRecord) record;
 	      assertEquals("11559238", trip.getBlockNumber());
 	      assertEquals("M14AD", trip.getRunRoute());
+	      record = reader.read();
+	      EventRecord event = (EventRecord) record;
+	      assertTrue(event.isTimepoint());
+	      assertTrue(event.isRevenue());
+	      
 	      StifRecord lastRecord = record;
 	      while (record != null) {
 	    	  lastRecord = record;
