@@ -113,9 +113,11 @@ public class InferenceInputQueueListenerTask extends InferenceQueueListenerTask 
 		vlr.setCurrentLocationLon(inferredResult.getInferredLongitude());
 		vlr.setPhase(EVehiclePhase.valueOf(inferredResult.getPhase()));
 		vlr.setStatus(inferredResult.getStatus());
+		
 		if (_vehicleLocationListener != null) {
 			_vehicleLocationListener.handleVehicleLocationRecord(vlr);
 		}
+		
 		if (useTimePredictions) {
 			// if we're updating time predictions with the generation service,
 			// tell the integration service to fetch

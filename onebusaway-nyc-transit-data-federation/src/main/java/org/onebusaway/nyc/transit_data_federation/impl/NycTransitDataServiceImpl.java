@@ -24,7 +24,9 @@ import org.onebusaway.exceptions.ServiceException;
 import org.onebusaway.geospatial.model.CoordinateBounds;
 import org.onebusaway.geospatial.model.CoordinatePoint;
 import org.onebusaway.geospatial.model.EncodedPolylineBean;
+import org.onebusaway.nyc.transit_data.model.OccupancyStatusEnum;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
+import org.onebusaway.nyc.transit_data_federation.impl.nyc.APCIntegrationServiceImpl;
 import org.onebusaway.nyc.transit_data_federation.impl.nyc.BundleSearchServiceImpl;
 import org.onebusaway.nyc.transit_data_federation.model.bundle.BundleItem;
 import org.onebusaway.nyc.transit_data_federation.services.bundle.BundleManagementService;
@@ -101,6 +103,9 @@ class NycTransitDataServiceImpl implements NycTransitDataService {
 
 	@Autowired
 	private PredictionIntegrationService _predictionIntegrationService;
+	
+	@Autowired
+	private APCIntegrationServiceImpl _apcIntegrationService;
 
 	@Autowired
 	private ScheduledServiceService _scheduledServiceService;
@@ -613,5 +618,16 @@ class NycTransitDataServiceImpl implements NycTransitDataService {
 	public Boolean stopHasRevenueService(String agencyId, String stopId) {
 		return _scheduledServiceService.stopHasRevenueService(agencyId, stopId); 
 	}
+
+  @Override
+  public OccupancyStatusEnum getVehicleLoadForTrip(TripStatusBean tripStatus) {
+    return _apcIntegrationService.getVehicleLoadForTrip(tripStatus);
+  }
+
+  @Override
+  public OccupancyStatusEnum getVehicleLoadForVehicleRouteDirection(
+      String VehicleId, String RouteID, String Direction) {
+    return _apcIntegrationService.getVehicleLoadForVehicleRouteDirection(VehicleId, RouteID, Direction);
+  }
 
 }

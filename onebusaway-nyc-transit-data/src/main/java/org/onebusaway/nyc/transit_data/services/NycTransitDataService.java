@@ -18,7 +18,10 @@ package org.onebusaway.nyc.transit_data.services;
 import java.util.List;
 
 import org.onebusaway.federations.annotations.FederatedByAgencyIdMethod;
+import org.onebusaway.nyc.transit_data.model.NycVehicleLoadBean;
+import org.onebusaway.nyc.transit_data.model.OccupancyStatusEnum;
 import org.onebusaway.realtime.api.TimepointPredictionRecord;
+import org.onebusaway.transit_data.model.trips.TripStatusBean;
 import org.onebusaway.transit_data.services.TransitDataService;
 
 /**
@@ -30,34 +33,52 @@ import org.onebusaway.transit_data.services.TransitDataService;
  *
  */
 public interface NycTransitDataService extends TransitDataService {
-	public List<TimepointPredictionRecord> getPredictionRecordsForVehicleAndTrip(String VehicleId,
-			String TripId);
-	
-	  /**
-	   * Given a stop, route, and direction, test if that stop has revenue service
-	   * on the given route in the given direction.
-	   * 
-	   * @param agencyId    Agency ID of stop; used only for routing requests
-	   *                    to federated backends
-	   * @param stopId      Agency-and-ID of stop being tested
-	   * @param routeId     Agency-and-ID of route to filter for
-	   * @param directionId Direction ID to filter for
-	   * @return true if the stop being tested ever permits boarding or alighting
-	   *         from the specified route in the specified direction in the 
-	   *         currently-loaded bundle; false otherwise
-	   */
-	  public Boolean stopHasRevenueServiceOnRoute(String agencyId, String stopId,
-	                String routeId, String directionId);
-	  
-	  /**
-	   * Given a stop, test if that stop has revenue service.
-	   * 
-	   * @param agencyId Agency ID of stop; used only for routing requests
-	   *                 to federated backends
-	   * @param stopId   Agency-and-ID of stop being tested
-	   * @return true if the stop being tested ever permits boarding or alighting
-	   *         from any route in any direction in the currently-loaded bundle;
-	   *         false otherwise
-	   */
-	  public Boolean stopHasRevenueService(String agencyId, String stopId);
+  public List<TimepointPredictionRecord> getPredictionRecordsForVehicleAndTrip(String VehicleId,
+      String TripId);
+
+  /**
+   * Given a stop, route, and direction, test if that stop has revenue service
+   * on the given route in the given direction.
+   * 
+   * @param agencyId    Agency ID of stop; used only for routing requests
+   *                    to federated backends
+   * @param stopId      Agency-and-ID of stop being tested
+   * @param routeId     Agency-and-ID of route to filter for
+   * @param directionId Direction ID to filter for
+   * @return true if the stop being tested ever permits boarding or alighting
+   *         from the specified route in the specified direction in the 
+   *         currently-loaded bundle; false otherwise
+   */
+  public Boolean stopHasRevenueServiceOnRoute(String agencyId, String stopId,
+      String routeId, String directionId);
+
+  /**
+   * Given a stop, test if that stop has revenue service.
+   * 
+   * @param agencyId Agency ID of stop; used only for routing requests
+   *                 to federated backends
+   * @param stopId   Agency-and-ID of stop being tested
+   * @return true if the stop being tested ever permits boarding or alighting
+   *         from any route in any direction in the currently-loaded bundle;
+   *         false otherwise
+   */
+  public Boolean stopHasRevenueService(String agencyId, String stopId);
+
+  /**
+   * Given a tripStatusBean, return the approximate vehicle occupancy 
+   * @param tripStatus
+   * @return
+   */
+  public OccupancyStatusEnum getVehicleLoadForTrip(TripStatusBean tripStatus);
+
+
+  /**
+   * Given a vehicle/route/direction, return the approximate vehicle occupancy
+   * @param vehicleId fully-qualified Vehicle ID
+   * @param routeId 
+   * @param direction String of GTFS direction name
+   * @return VehicleLoadBean  
+   */
+  public OccupancyStatusEnum getVehicleLoadForVehicleRouteDirection(
+      String VehicleId, String RouteID, String Direction);
 }
