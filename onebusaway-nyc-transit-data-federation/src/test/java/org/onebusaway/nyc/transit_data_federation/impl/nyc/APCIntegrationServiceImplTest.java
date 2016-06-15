@@ -4,24 +4,34 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.onebusaway.nyc.transit_data.model.NycVehicleLoadBean;
 import org.onebusaway.nyc.transit_data.model.OccupancyStatusEnum;
+import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
+import org.onebusaway.nyc.util.configuration.ConfigurationService;
 import org.onebusaway.transit_data.model.RouteBean;
 import org.onebusaway.transit_data.model.trips.TripBean;
 import org.onebusaway.transit_data.model.trips.TripStatusBean;
 
+
 @Ignore public class APCIntegrationServiceImplTest {
-  TripStatusBean tripStatus;
-  APCIntegrationServiceImpl service;
+  private static TripStatusBean tripStatus;
+  @InjectMocks
+  private static APCIntegrationServiceImpl service;
   
-  @Before
-  public void setUp() throws Exception {
+  
+  @BeforeClass
+  public static void setUp() throws Exception {
+    
     tripStatus =  new TripStatusBean();
     service = new APCIntegrationServiceImpl();
-    service.initializeCache();
-    
+        
     tripStatus.setVehicleId("MTA_12345");
     RouteBean.Builder routeBuilder = RouteBean.builder();
     routeBuilder.setId("MTA_101X");
@@ -31,6 +41,12 @@ import org.onebusaway.transit_data.model.trips.TripStatusBean;
     tripBean.setDirectionId("1");
     tripStatus.setActiveTrip(tripBean);
   }
+  
+  @Before
+  public void initMocks(){
+    MockitoAnnotations.initMocks(this);
+  }
+  
 
   @Test
   public void testProcessMessageAndCache() {

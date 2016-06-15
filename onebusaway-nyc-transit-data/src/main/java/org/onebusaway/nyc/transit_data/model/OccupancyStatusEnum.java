@@ -20,17 +20,20 @@ public enum OccupancyStatusEnum {
   STANDING_ROOM_ONLY, CRUSHED_STANDING_ROOM_ONLY, FULL,
   NOT_ACCEPTING_PASSENGERS;
   
-  public String getSiriEquivalentOccupancyEnum(OccupancyStatusEnum o){
-    if (o == OccupancyStatusEnum.EMPTY || o == OccupancyStatusEnum.MANY_SEATS_AVAILABLE 
-        || o == OccupancyStatusEnum.FEW_SEATS_AVAILABLE) {
+  // since pulling in the SIRI dependency is a bit large for this package,
+  // this returns a string over the SIRI OccupancyEnum.
+  // there may be a better way over using a String.
+  public String getSiriEquivalentOccupancyEnum(){
+    if (this == OccupancyStatusEnum.EMPTY || this == OccupancyStatusEnum.MANY_SEATS_AVAILABLE 
+        || this == OccupancyStatusEnum.FEW_SEATS_AVAILABLE) {
       return "seatsAvailable";
-    } else if (o == OccupancyStatusEnum.STANDING_ROOM_ONLY) {
+    } else if (this == OccupancyStatusEnum.STANDING_ROOM_ONLY) {
       return "standingAvailable";
-    } else if (o == OccupancyStatusEnum.CRUSHED_STANDING_ROOM_ONLY || o == OccupancyStatusEnum.FULL
-       || o == OccupancyStatusEnum.NOT_ACCEPTING_PASSENGERS ) {
+    } else if (this == OccupancyStatusEnum.CRUSHED_STANDING_ROOM_ONLY || this == OccupancyStatusEnum.FULL
+       || this == OccupancyStatusEnum.NOT_ACCEPTING_PASSENGERS ) {
       return "full";
     } else {
-      return "unknown";
+      return null;
     }    
   }
 }

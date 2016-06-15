@@ -32,6 +32,7 @@ import org.onebusaway.nyc.presentation.impl.DateUtil;
 import org.onebusaway.nyc.presentation.service.realtime.PresentationService;
 import org.onebusaway.nyc.siri.support.SiriPolyLinesExtension;
 import org.onebusaway.nyc.siri.support.SiriUpcomingServiceExtension;
+import org.onebusaway.nyc.transit_data.model.OccupancyStatusEnum;
 import org.onebusaway.nyc.transit_data.services.NycTransitDataService;
 import org.onebusaway.nyc.webapp.actions.api.siri.model.DetailLevel;
 import org.onebusaway.nyc.webapp.actions.api.siri.model.RouteDirection;
@@ -70,6 +71,7 @@ import uk.org.siri.siri_2.LocationStructure;
 import uk.org.siri.siri_2.MonitoredCallStructure;
 import uk.org.siri.siri_2.MonitoredVehicleJourneyStructure;
 import uk.org.siri.siri_2.NaturalLanguageStringStructure;
+import uk.org.siri.siri_2.OccupancyEnumeration;
 import uk.org.siri.siri_2.OnwardCallStructure;
 import uk.org.siri.siri_2.OnwardCallsStructure;
 import uk.org.siri.siri_2.OperatorRefStructure;
@@ -321,6 +323,13 @@ public final class SiriSupportV2 {
 			monitoredVehicleJourney.setProgressRate(getProgressRateForPhaseAndStatus(
 								currentVehicleTripStatus.getStatus(),
 								currentVehicleTripStatus.getPhase()));
+			
+			// TODO: needs an IF wrapped around it for when configuration service says APC is active.
+			OccupancyStatusEnum load = nycTransitDataService.getVehicleLoadForTrip(currentVehicleTripStatus);
+			if (load != null) {
+  			OccupancyEnumeration occ = OccupancyEnumeration.valueOf(load.getSiriEquivalentOccupancyEnum());
+  			monitoredVehicleJourney.setOccupancy(occ);
+			}
 		}
 		
 		// detail level - normal

@@ -47,17 +47,14 @@ implements APCGetterService {
   //TODO: is this necessary?
   @Refreshable(dependsOn = {CACHE_TIMEOUT_KEY})
   private synchronized void refreshCache() {
-    if (_cache == null) return; // nothing to do
+    
     int timeout = _configurationService.getConfigurationValueAsInteger(CACHE_TIMEOUT_KEY, DEFAULT_CACHE_TIMEOUT);
-    _log.info("rebuilding prediction cache with " + _cache.size() + " entries after refresh with timeout=" + timeout + "...");
+    _log.info("rebuilding prediction cache with " + getCache().size() + " entries after refresh with timeout=" + timeout + "...");
 
-    ConcurrentMap<String, NycVehicleLoadBean> map = _cache.asMap();
-    _cache = CacheBuilder.newBuilder()
-        .expireAfterWrite(timeout, TimeUnit.SECONDS)
-        .build();
-
+    ConcurrentMap<String, NycVehicleLoadBean> map = getCache().asMap();
+ 
     for (Entry<String, NycVehicleLoadBean> entry : map.entrySet()) {
-      _cache.put(entry.getKey(), entry.getValue());
+      getCache().put(entry.getKey(), entry.getValue());
     }
     _log.info("done");
   }
@@ -82,7 +79,7 @@ implements APCGetterService {
   @Override
   protected void processResult(NycVehicleLoadBean message, String s) {
     _log.debug("VehicleLoadBean for " + hashFromBean(message) + message.getEstimatedCount());
-    _cache.put(hashFromBean(message), message);
+    getCache().put(hashFromBean(message), message);
   }
 
   @Override
@@ -102,8 +99,4 @@ implements APCGetterService {
   void initializeCache(){
     this.refreshCache();
   }
-
-
-
-
 }
