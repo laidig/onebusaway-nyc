@@ -55,6 +55,11 @@
         </property>
     </bean>
 
+
+ 	<bean id="apc" class="org.onebusaway.nyc.transit_data_federation.impl.nyc.APCIntegrationServiceImpl">
+ 	</bean>
+    
+    
     <bean id="bhsInputQueue" class="org.onebusaway.nyc.vehicle_tracking.impl.queue.DummyPartitionedInputQueueListenerTask"/>     
 
 	<!--  Time Queue Configuration -->
