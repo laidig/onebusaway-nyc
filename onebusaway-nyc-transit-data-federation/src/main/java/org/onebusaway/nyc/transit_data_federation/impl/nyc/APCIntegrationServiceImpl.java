@@ -24,10 +24,10 @@ implements APCGetterService {
   private static final String CACHE_TIMEOUT_KEY = "tds.apc.expiry";
 
   @Autowired
-  private NycTransitDataService _transitDataService;
-
-  @Autowired
   private ConfigurationService _configurationService;
+  public void setConfigurationService(ConfigurationService configService) {
+	  _configurationService = configService;
+  }
 
   private Cache<String, NycVehicleLoadBean> _cache = null;
 
